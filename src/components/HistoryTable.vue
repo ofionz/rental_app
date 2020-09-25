@@ -1,7 +1,7 @@
 <template>
   <table>
     <thead>
-      <tr>
+      <tr  class="payments-table">
         <th>Имя</th>
         <th>Тип платежа</th>
         <th>Сумма</th>
@@ -13,7 +13,7 @@
     </thead>
 
     <tbody>
-      <tr v-for="(payment, index) of payments" :key="index">
+      <tr v-for="(payment, index) of payments" :key="index" class="payments-table">
         <td>{{ payment.name }}</td>
         <td> {{ typeToString(payment.type) }}</td>
         <td>{{ payment.amount }}</td>
@@ -72,4 +72,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .payments-table{
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+</style>
