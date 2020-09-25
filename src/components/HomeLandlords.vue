@@ -9,8 +9,8 @@
           class="currency-line"
         >
           <span
-            ><a class="refs" :href="'record/?type=landlords&'+'id='+landlord.id">{{ landlord.info.name }} </a>:
-            {{ calcDebtToTheLandlord(landlord, date) }}
+            ><a class="refs" :href="'record/?type=landlords&'+'id='+landlord.id">{{ landlord.info.name }} :
+            {{ calcDebtToTheLandlord(landlord, date) }}</a>
           </span>
         </p>
       </div>

@@ -11,16 +11,32 @@
           <thead>
             <tr>
               <th>Имя</th>
-              <th>Долг</th>
+              <th>За аренду</th>
+              <th>За свет</th>
               <th>Всего</th>
             </tr>
           </thead>
 
           <tbody>
-            <tr v-for="tenant in tenants" :key="tenant.id">
-              <td ><a class="refs" :href="'tenants/?id='+tenant.id">{{ tenant.info.name }}</a></td>
-              <td>{{ calcDebtTenant(tenant, date) }}</td>
-              <td>{{ tenant.info.rent }}</td>
+            <tr v-for="tenant in tenantsWithDebt" :key="tenant.id">
+              <td>
+                <a class="refs" :href="'tenants/?id=' + tenant.id">{{
+                  tenant.info.name
+                }}</a>
+              </td>
+              <td>
+                <a class="refs" :href="'record/?type=rent&id=' + tenant.id">{{
+                  calcDebtTenant(tenant)
+                }}</a>
+              </td>
+              <td>
+                <a class="refs" :href="'record/?type=electricity&id=' + tenant.id">{{
+                  calcElectrDebtAmount(tenant)
+                }}</a>
+              </td>
+              <td>
+                {{ calcDebtTenant(tenant) + calcElectrDebtAmount(tenant) }}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -39,18 +55,58 @@ export default {
     },
     date: {
       required: true
+    },
+    lastMonthDate: {
+      required: true
+    }
+  },
+  computed: {
+    tenantsWithDebt: function() {
+      let result = [];
+      for (let tenant in this.tenants) {
+        if (
+          this.calcElectrDebtAmount(this.tenants[tenant]) !== 0 ||
+          this.calcDebtTenant(this.tenants[tenant]) !== 0
+        ) {
+          result.push(this.tenants[tenant]);
+        }
+      }
+      console.log(result);
+      return result;
     }
   },
   methods: {
-    calcDebtTenant(tenant, date) {
-      return tenant.info.rent - this.$calcPaidAmount(tenant, date);
+    calcElectrDebtAmount(tenant) {
+      let debtAmount = this.calcElectrAmount(tenant);
+      if (tenant.payments && tenant.payments[this.date]) {
+        for (const key of Object.keys(tenant.payments[this.date])) {
+          if (tenant.payments[this.date][key].type === "electricity")
+            debtAmount -= tenant.payments[this.date][key].amount;
+        }
+      }
+      return debtAmount;
+    },
+    calcElectrAmount(tenant) {
+      let amount = 0;
+      if (tenant.meters && tenant.meters[this.date]) {
+        for (const key of Object.keys(tenant.meters[this.date])) {
+          amount +=
+            (tenant.meters[this.date][key].readings -
+              tenant.meters[this.lastMonthDate][key].readings) *
+            tenant.info.kilowatt;
+        }
+      }
+      return amount;
+    },
+    calcDebtTenant(tenant) {
+      return tenant.info.rent - this.$calcPaidAmount(tenant, this.date);
     }
   }
 };
 </script>
 
 <style scoped>
-  .refs{
-       color: inherit;
-     }
+.refs {
+  color: inherit;
+}
 </style>

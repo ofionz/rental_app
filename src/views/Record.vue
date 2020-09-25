@@ -357,13 +357,34 @@ export default {
     }
 
     if (this.$route.query && this.$route.query.id && this.$route.query.type) {
-      if (this.$route.query.type == "landlords") this.type = "rent";
-      this.innertype = "expense";
-      const { id, info } = this.landlords.find(
-        t => t.id === this.$route.query.id
-      );
-      this.currentLandlord = id;
-      this.name = info.name;
+      if (this.$route.query.type == "landlords") {
+        this.type = "rent";
+        this.innertype = "expense";
+        const { id, info } = this.landlords.find(
+          t => t.id === this.$route.query.id
+        );
+        this.currentLandlord = id;
+        this.name = info.name;
+      }
+      else if (this.$route.query.type == "rent") {
+        this.type = "rent";
+        this.innertype = "income";
+        const { id, info } = this.tenants.find(
+          t => t.id === this.$route.query.id
+        );
+        this.current = id;
+        this.name = info.name;
+      }
+      else if (this.$route.query.type == "electricity") {
+        this.type = "electricity";
+        this.innertype = "income";
+        const { id, info } = this.tenants.find(
+          t => t.id === this.$route.query.id
+        );
+        this.current = id;
+        this.name = info.name;
+      }
+
     }
 
     setTimeout(() => {

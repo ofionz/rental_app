@@ -11,7 +11,7 @@
     <Loader v-if="loading"></Loader>
     <div v-else class="row">
       <HomeLandlords :landlords="landlords" :date="date"></HomeLandlords>
-      <HomeTenants :tenants="tenants" :date="date"></HomeTenants>
+      <HomeTenants :tenants="tenants" :date="date" :lastMonthDate="lastMonthDate"></HomeTenants>
     </div>
   </div>
 </template>
@@ -25,6 +25,7 @@ export default {
   data: () => ({
     loading: false,
     date: "",
+    lastMonthDate: '',
     tenants: [],
     landlords: []
   }),
@@ -37,8 +38,14 @@ export default {
     this.refresh();
   },
   methods: {
+    subtractMonth(rawDate) {
+      const date = new Date(rawDate);
+      const newDate = new Date(date.setMonth(date.getMonth() - 1));
+      return this.$options.filters.date(newDate, "string");
+    },
     changeMonth(newDate) {
       this.date = this.$options.filters.date(newDate, "string");
+      this.lastMonthDate = this.subtractMonth(newDate);
     },
     calcFreeMoney(date) {
       let freeMoney = 0;
