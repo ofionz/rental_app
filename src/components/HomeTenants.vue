@@ -71,7 +71,6 @@ export default {
           result.push(this.tenants[tenant]);
         }
       }
-      console.log(result);
       return result;
     }
   },

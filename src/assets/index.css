@@ -294,14 +294,17 @@ font-family: 'Bellota Text', cursive;
     background-color: #1fb6b6 !important;
 }
 .orange.darken-3 {
-    background-color: #4edf44b5 !important;
+    background-color: #dfa644  !important;
 }
 
 .page-title{
     flex-wrap: wrap;
 }
-.app-sidenav {
-    width: 100%;
+
+@media (max-width: 700px){
+    .app-sidenav {
+        width: 100%;
+    }
 }
 .page-title h3{
     margin-bottom: 15px!important;

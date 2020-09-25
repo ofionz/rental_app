@@ -8,7 +8,7 @@
         </div>
       </main>
       <Navbar @toogleSidebar="isSidebarVisible = !isSidebarVisible"> </Navbar>
-      <Sidebar v-model="isSidebarVisible"> </Sidebar>
+      <Sidebar v-model="isSidebarVisible" @hideSidebar="isSidebarVisible=false"> </Sidebar>
       <div class="fixed-action-btn">
         <router-link class="btn-floating btn-large blue" to="/record">
           <i class="large material-icons">add</i>

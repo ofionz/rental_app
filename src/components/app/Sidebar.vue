@@ -7,8 +7,9 @@
       active-class="active"
       :to="link.url"
       :exact="link.exact == 'true'"
+
     >
-      <a href="#" class="waves-effect waves-orange pointer">{{ link.title }}</a>
+      <a @click="hideSidebar()" href="#" class="waves-effect waves-orange pointer">{{ link.title }}</a>
     </router-link>
   </ul>
 </template>
@@ -46,6 +47,12 @@ export default {
       }
     ]
   }),
+  methods: {
+    hideSidebar (){
+      console.log("123");
+      this.$emit("hideSidebar");
+    }
+  },
   mounted() {
     if (this.$store.getters.user.admin) {
       this.links.push({
