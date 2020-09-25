@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <div class="page-title">
+      <h3>История записей</h3>
+      <MonthChooser @changedMonth="changeMonth"></MonthChooser>
+    </div>
+    <section>
+      <Loader v-if="loading"></Loader>
+      <HistoryTable
+        v-if="!loading && paymentsList.length"
+        :payments="paymentsList"
+      ></HistoryTable>
+      <p class="center" v-else>Записи за текущий месяц отсутствуют</p>
+    </section>
+  </div>
+</template>
+<script>
+import HistoryTable from "../components/HistoryTable";
+import MonthChooser from "../components/app/MonthChooser";
+export default {
+  name: "history",
+  data: () => ({
+    loading: true,
+    paymentsList: [],
+    tenants: [],
+    date: ""
+  }),
+  async mounted() {
+    this.setPaymentData(this.date);
+    await this.$store.dispatch("fetchTenants");
+    this.loading = false;
+  },
+  methods: {
+    changeMonth(newDate) {
+      this.date = this.$options.filters.date(newDate, "string");
+      this.setPaymentData(this.date);
+    },
+    setPaymentData(date) {
+      let list = [];
+      Object.entries(this.$store.getters.tenants).map(function(arr) {
+        if (
+          arr[1] &&
+          arr[1].payments &&
+          arr[1].payments[date] &&
+          Object.keys(arr[1].payments[date]).length
+        ) {
+          for (let payment in arr[1].payments[date]) {
+            const elem = {
+              id: arr[0],
+              date: date,
+              paymentId: payment,
+              name: arr[1].info.name,
+              amount: arr[1].payments[date][payment].amount,
+              type: arr[1].payments[date][payment].type,
+              paymentDate: new Date(arr[1].payments[date][payment].date),
+              description: arr[1].payments[date][payment].description,
+              recipient: arr[1].payments[date][payment].recipient
+            };
+            list.push(elem);
+          }
+        }
+      });
+      list.sort(function(a, b) {
+        return b.paymentDate - a.paymentDate;
+      });
+      this.paymentsList = list;
+    }
+  },
+  components: {
+    HistoryTable,
+    MonthChooser
+  }
+};
+</script>
