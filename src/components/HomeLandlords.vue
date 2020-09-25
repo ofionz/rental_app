@@ -9,7 +9,7 @@
           class="currency-line"
         >
           <span
-            >{{ landlord.info.name }} :
+            ><a class="refs" :href="'record/?type=landlords&'+'id='+landlord.id">{{ landlord.info.name }} </a>:
             {{ calcDebtToTheLandlord(landlord, date) }}
           </span>
         </p>
@@ -34,10 +34,15 @@ export default {
       return (
         this.$calcLandlordRentAmount(landlord) -
         this.$calcPaidAmount(landlord, date)
+
       );
     }
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .refs{
+    color: inherit;
+  }
+</style>

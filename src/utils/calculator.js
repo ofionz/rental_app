@@ -18,10 +18,15 @@ export default {
         )
       ) {
         for (let payment in essence.payments[date]) {
-          if (essence.payments[date][payment].type == "rent")
+
+          if (essence.payments[date][payment].type !== "electricity"){
+
             paidRents += Number(essence.payments[date][payment].amount);
+
+          }
         }
       }
+
       return paidRents;
     };
   }

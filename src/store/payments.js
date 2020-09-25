@@ -3,12 +3,12 @@ import firebase from "firebase/app";
 import info from "./info";
 export default {
   actions: {
-    async updatePayment({ commit }, { id, date, paymentId, payment }) {
+    async updatePayment({ commit }, {type = 'tenants', id, date, paymentId, payment }) {
 
       try {
         await firebase
           .database()
-          .ref(`/tenants/`)
+          .ref(`/${type}/`)
           .child(id)
           .child("payments")
           .child(date)
@@ -20,11 +20,11 @@ export default {
       }
     },
 
-    async deletePayment({ commit }, { id, date, paymentId }) {
+    async deletePayment({ commit }, {type = 'tenants', id, date, paymentId }) {
       try {
         firebase
           .database()
-          .ref(`/tenants/`)
+          .ref(`/${type}/`)
           .child(id)
           .child("payments")
           .child(date)
@@ -36,11 +36,13 @@ export default {
       }
     },
 
-    async addPayment({ commit }, { id, date, paymentInfo }) {
+
+
+    async addPayment({ commit }, {type = 'tenants', id, date, paymentInfo }) {
       try {
         await firebase
           .database()
-          .ref(`/tenants/`)
+          .ref(`/${type}/`)
           .child(id)
           .child("payments")
           .child(date)
@@ -51,11 +53,11 @@ export default {
       }
     },
 
-    async fetchPaymentById({ commit }, { id, date, paymentId }) {
+    async fetchPaymentById({ commit }, {type = 'tenants', id, date, paymentId }) {
       try {
        const payment = (await firebase
           .database()
-          .ref(`/tenants/`)
+          .ref(`/${type}/`)
           .child(id)
           .child("payments")
           .child(date)

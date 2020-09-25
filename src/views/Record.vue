@@ -17,7 +17,7 @@
               value="rent"
               v-model="type"
             />
-            <span>Аренда приход</span>
+            <span>Аренда</span>
           </label>
         </p>
 
@@ -47,7 +47,14 @@
         </p>
       </div>
 
-      <div class="input-field">
+      <div
+        v-show="
+          innertype !== 'expense' ||
+            type === 'electricity' ||
+            type === 'readings'
+        "
+        class="input-field"
+      >
         <select v-model="current" ref="select">
           <option
             v-for="tenant of tenants"
@@ -57,6 +64,49 @@
           >
         </select>
         <label>Выберите арендатора</label>
+      </div>
+      <div
+        v-show="innertype === 'expense' && type === 'rent'"
+        class="input-field"
+      >
+
+        <select v-model="currentLandlord" ref="select2">
+          <option
+            v-for="landlord of landlords"
+            :key="landlord.id"
+            :value="landlord.id"
+          >
+            {{ landlord.info.name }}</option
+          >
+        </select>
+        <label>Свободные деньги: {{calcFreeMoney(date)}} руб., к выплате еще: {{calcDebtToTheLandlord()}} руб. <br>Выберите арендодателя </label>
+      </div>
+      <div v-if="type === 'rent'" class="checkBoxContainer">
+        <p>
+          <label>
+            <input
+              class="with-gap"
+              name="innertype"
+              type="radio"
+              value="income"
+              v-model="innertype"
+            />
+            <span>Приход</span>
+          </label>
+        </p>
+
+        <p>
+          <label>
+            <input
+              class="with-gap"
+              name="innertype"
+              type="radio"
+              value="expense"
+              v-model="innertype"
+            />
+            <span>Расход</span>
+          </label>
+        </p>
       </div>
       <div v-if="type === 'rent' || type === 'electricity'">
         <div class="input-field">
@@ -103,7 +153,11 @@
           >
         </div>
         <div class="input-field">
-          <input id="descriptionReadings"    v-model="meters[index].descriptionReadings" type="text" />
+          <input
+            id="descriptionReadings"
+            v-model="meters[index].descriptionReadings"
+            type="text"
+          />
           <label for="descriptionReadings">Описание</label>
         </div>
         <div class="input-field">
@@ -133,22 +187,25 @@ export default {
   data: () => ({
     date: "",
     current: null,
+    currentLandlord: null,
     kilowatt: 0,
     loading: true,
     tenants: [],
+    landlords: [],
     select: null,
+    innertype: "income",
     type: "rent",
     amount: "",
     description: "",
     rawDate: new Date(),
     data: "",
     lastMonthMeters: null,
-    allMeters: null
+    allMeters: null,
   }),
   validations: {
     amount: { required, minValue: minValue(0) }
+
   },
-  // TODO реализовать запись дохода лордов
   components: { MonthChooser },
   computed: {
     meters: function() {
@@ -181,17 +238,37 @@ export default {
   watch: {
     current(tenId) {
       const { id, info, meters } = this.tenants.find(t => t.id === tenId);
-      this.kilowatt = info.kilowatt;
       this.current = id;
       this.name = info.name;
-      this.owner = info.owner;
-      this.phone = info.phone;
-      this.rent = info.rent;
+      this.kilowatt = info.kilowatt;
       this.allMeters = meters;
       this.lastMonthMeters = this.allMeters[this.subtractMonth(this.rawDate)];
+    },
+    currentLandlord(tenId) {
+      const { id, info } = this.landlords.find(t => t.id === tenId);
+      this.currentLandlord = id;
+      this.name = info.name;
     }
   },
   methods: {
+    calcDebtToTheLandlord(){
+      const landlord = this.landlords.find(t => t.id === this.currentLandlord);
+      return (
+        this.$calcLandlordRentAmount(landlord) -
+        this.$calcPaidAmount(landlord, this.date)
+
+      );
+    },
+    calcFreeMoney(date) {
+      let freeMoney = 0;
+      for (let tenant in this.tenants) {
+        freeMoney += this.$calcPaidAmount(this.tenants[tenant], date);
+      }
+      for (let landlord in this.landlords) {
+        freeMoney -= this.$calcPaidAmount(this.landlords[landlord], date);
+      }
+      return freeMoney;
+    },
     subtractMonth(rawDate) {
       const date = new Date(rawDate);
       const newDate = new Date(date.setMonth(date.getMonth() - 1));
@@ -215,7 +292,10 @@ export default {
       try {
         const date = this.date;
         const id = this.current;
-        if (this.type === "rent" || this.type === "electricity") {
+        if (
+          (this.type === "rent" && this.innertype === "income") ||
+          this.type === "electricity"
+        ) {
           const paymentInfo = {
             amount: Number(this.amount),
             description: this.description,
@@ -228,15 +308,30 @@ export default {
             date,
             paymentInfo
           });
-        } else if(this.type === "readings") {
+        } else if (this.type === "readings") {
           const meters = this.meters;
           await this.$store.dispatch("createMeterRecord", {
             id,
             date,
             meters
           });
+        } else if (this.type === "rent" && this.innertype === "expense") {
+          const type = "landlords";
+          const id = this.currentLandlord;
+          const paymentInfo = {
+            type: type,
+            amount: Number(this.amount),
+            description: this.description,
+            date: new Date().toJSON(),
+            recipient: await this.$store.dispatch("getUid")
+          };
+          await this.$store.dispatch("addPayment", {
+            type,
+            id,
+            date,
+            paymentInfo
+          });
         }
-
       } catch (e) {
         this.$error("Запись не добавлена!.");
       }
@@ -250,18 +345,36 @@ export default {
     // eslint-disable-next-line no-undef
     M.updateTextFields();
   },
-
   async mounted() {
     this.tenants = await this.$store.dispatch("fetchTenants");
+    this.landlords = await this.$store.dispatch("fetchLandlords");
     this.loading = false;
     if (this.tenants.length) {
       this.current = this.tenants[0].id;
+    }
+    if (this.landlords.length) {
+      this.currentLandlord = this.landlords[0].id;
+    }
+
+    if (this.$route.query && this.$route.query.id && this.$route.query.type) {
+      if (this.$route.query.type == "landlords") this.type = "rent";
+      this.innertype = "expense";
+      const { id, info } = this.landlords.find(
+        t => t.id === this.$route.query.id
+      );
+      this.currentLandlord = id;
+      this.name = info.name;
     }
 
     setTimeout(() => {
       // eslint-disable-next-line no-undef
       this.select = M.FormSelect.init(this.$refs.select);
     }, 0);
+    setTimeout(() => {
+      // eslint-disable-next-line no-undef
+      this.select = M.FormSelect.init(this.$refs.select2);
+    }, 0);
+
     // eslint-disable-next-line no-undef
     M.updateTextFields();
   },

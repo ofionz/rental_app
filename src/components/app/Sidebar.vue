@@ -35,26 +35,23 @@ export default {
       {
         title: "Счетчики арендаторов",
         url: "/electricity"
-      }
-      ,
+      },
       {
         title: "Главные счетчики",
         url: "/mainelectricity"
+      },
+      {
+        title: "Арендаторы",
+        url: "/tenants"
       }
     ]
   }),
   mounted() {
     if (this.$store.getters.user.admin) {
-      this.links.push(
-        {
-          title: "Арендаторы",
-          url: "/tenants"
-        },
-        {
-          title: "Добавить пользователя",
-          url: "/register"
-        }
-      );
+      this.links.push({
+        title: "Добавить пользователя",
+        url: "/register"
+      });
     }
   }
 };

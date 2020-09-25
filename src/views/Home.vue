@@ -25,14 +25,9 @@ export default {
   data: () => ({
     loading: false,
     date: "",
-    tenants:[]
+    tenants: [],
+    landlords: []
   }),
-  computed: {
-    //TODO поменять получение лордов
-    landlords() {
-      return this.$store.getters.landlords;
-    }
-  },
   components: {
     HomeTenants,
     HomeLandlords,
@@ -55,9 +50,11 @@ export default {
       }
       return freeMoney;
     },
+
     async refresh() {
       this.loading = true;
       this.tenants = await this.$store.dispatch("fetchTenants");
+      this.landlords = await this.$store.dispatch("fetchLandlords");
       this.loading = false;
     }
   }

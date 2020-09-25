@@ -34,7 +34,7 @@ const router = new Router({
       component: () => import("./views/Tenants.vue")
     },
     {
-      path: "/detail/:id/:date/:paymentId",
+      path: "/detail/:type/:id/:date/:paymentId",
       name: "detail",
       meta: { layout: "main", admin: false },
       component: () => import("./views/Detail.vue")

@@ -35,9 +35,8 @@ export default {
       this.date = this.$options.filters.date(newDate, "string");
       this.setPaymentData(this.date);
     },
-    setPaymentData(date) {
-      let list = [];
-      Object.entries(this.$store.getters.tenants).map(function(arr) {
+    addData(date, essence, list) {
+      Object.entries(essence).map(function(arr) {
         if (
           arr[1] &&
           arr[1].payments &&
@@ -60,6 +59,11 @@ export default {
           }
         }
       });
+      return list;
+    },
+    setPaymentData(date) {
+      let list = this.addData(date, this.$store.getters.tenants, []);
+      this.addData(date, this.$store.getters.landlords, list);
       list.sort(function(a, b) {
         return b.paymentDate - a.paymentDate;
       });

@@ -58,6 +58,7 @@ export default {
   },
   async mounted() {
     this.params = {
+      type: this.$route.params.type,
       id: this.$route.params.id,
       date: this.$route.params.date,
       paymentId: this.$route.params.paymentId

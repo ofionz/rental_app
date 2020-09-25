@@ -25,7 +25,7 @@
             class="btn-small btn"
             @click="
               $router.push(
-                `/detail/${payment.id}/${payment.date}/${payment.paymentId}`
+                `/detail/${formatType(payment.type)}/${payment.id}/${payment.date}/${payment.paymentId}`
               )
             "
           >
@@ -45,12 +45,19 @@ export default {
     payments: { type: Array, required: true }
   },
   methods: {
+    formatType(type){
+      if(type==='landlords'){
+        return type;
+      } else return 'tenants'
+    },
     typeToString(type) {
       switch (type) {
         case "rent":
           return 'Аренда' ;
         case "electricity":
           return "Свет";
+        case "landlords":
+          return "Отдано";
         default:
           return "Неизвестный";
       }
