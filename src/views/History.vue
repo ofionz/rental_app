@@ -4,7 +4,7 @@
       <h3>История записей</h3>
       <MonthChooser @changedMonth="changeMonth"></MonthChooser>
     </div>
-    <section>
+    <section class="history-list">
       <Loader v-if="loading"></Loader>
       <HistoryTable
         v-if="!loading && paymentsList.length"
@@ -78,4 +78,7 @@
 };
 </script>
 <style>
+  .history-list{
+    overflow: scroll;
+  }
 </style>

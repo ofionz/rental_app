@@ -242,6 +242,7 @@ font-family: 'Bellota Text', cursive;
   color: #000;
   text-transform: uppercase;
     margin-bottom: 20px;
+    font-family: 'Bellota Text', cursive;
 }
 .card .card-title {
     font-size: 1.3rem!important;
@@ -287,8 +288,8 @@ font-family: 'Bellota Text', cursive;
     color:#fff!important;
 }
 
-.currency-line span, .card-title-white, .refs{
-    text-shadow: 2px 2px 6px black;
+.currency-line span, .card-title-white, .refs,.bill-card{
+    text-shadow: 2px 2px 3px black;
 }
 .light-blue {
     background-color: #1fb6b6 !important;
@@ -309,3 +310,5 @@ font-family: 'Bellota Text', cursive;
 .page-title h3{
     margin-bottom: 15px!important;
 }
+
+
