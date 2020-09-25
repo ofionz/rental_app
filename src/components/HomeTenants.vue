@@ -4,7 +4,7 @@
       <div class="card-content white-text">
         <div class="card-header">
           <router-link tag="span" to="/tenants">
-            <span style="cursor: pointer" class="card-title">Арендаторы</span>
+            <span style="cursor: pointer" class="card-title card-title-white">Арендаторы</span>
           </router-link>
         </div>
         <table>

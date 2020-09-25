@@ -11,9 +11,10 @@
 </template>
 
 <script>
-import Datepicker from "vuejs-datepicker";
-import { ru } from "vuejs-datepicker/dist/locale";
-export default {
+  import Datepicker from "vuejs-datepicker";
+  import {ru} from "vuejs-datepicker/dist/locale";
+
+  export default {
   name: "MonthChooser",
   components: {
     Datepicker
@@ -32,4 +33,5 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>
