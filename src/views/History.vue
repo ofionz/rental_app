@@ -15,9 +15,10 @@
   </div>
 </template>
 <script>
-import HistoryTable from "../components/HistoryTable";
-import MonthChooser from "../components/app/MonthChooser";
-export default {
+  import HistoryTable from "../components/HistoryTable";
+  import MonthChooser from "../components/app/MonthChooser";
+
+  export default {
   name: "history",
   data: () => ({
     loading: true,
@@ -76,3 +77,5 @@ export default {
   }
 };
 </script>
+<style>
+</style>

@@ -3,9 +3,9 @@
     <div class="nav-wrapper">
       <div class="navbar-left">
         <a href="#" @click.prevent="$emit('toogleSidebar')">
-          <i class="material-icons black-text">dehaze</i>
+          <i class="material-icons">dehaze</i>
         </a>
-        <span class="black-text">{{ date | date("datetime") }}</span>
+        <span>{{ date | date("datetime") }}</span>
       </div>
 
       <ul class="right hide-on-small-and-down">

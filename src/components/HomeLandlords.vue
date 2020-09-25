@@ -2,7 +2,7 @@
   <div class="col s12 m6 l4">
     <div class="card light-blue bill-card">
       <div class="card-content white-text">
-        <span class="card-title">Арендодатели</span>
+        <span class="card-title card-title-white">Арендодатели</span>
         <p
           v-for="landlord in landlords"
           :key="landlord.info.name"

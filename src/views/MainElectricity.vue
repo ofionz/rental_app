@@ -45,11 +45,15 @@
         </select>
         <label>Выберите помещение</label>
       </div>
-      <div v-if="type === 'info' && lastMonthReadings && readings">
+      <div v-if="type === 'info' && lastMonthReadings && readings"  class="meters-info">
+        <span class="meters-info-title">Реальные показания</span>
+        <span class="meters-info-title">Показания за пр.месяц</span>
+        <span class="meters-info-title">Текущие показания</span>
+        <span class="meters-info-title">Разница показаний</span>
+        <span class="meters-info-title">Разница показаний с потерями</span>
         <span> {{ readings.real_readings }}</span>
         <span> {{ lastMonthReadings.readings }}</span>
         <span> {{ readings.readings }}</span>
-
         <span> {{ readings.readings - lastMonthReadings.readings }}</span>
         <span>
           {{
@@ -131,9 +135,10 @@
   </div>
 </template>
 <script>
-import MonthChooser from "../components/app/MonthChooser";
-import { required, minValue } from "vuelidate/lib/validators";
-export default {
+  import MonthChooser from "../components/app/MonthChooser";
+  import {minValue, required} from "vuelidate/lib/validators";
+
+  export default {
   name: "MainElectricity",
   data: () => ({
     date: "",
@@ -248,5 +253,26 @@ export default {
 .info-section {
   display: flex;
   justify-content: space-between;
+}
+.meters-info{
+    display: grid;
+    grid-template-columns: repeat(5, auto);
+    background: #ffa726;
+    color: #fff;
+  font-weight: bold;
+}
+.meters-info span{
+  padding: 10px;
+}
+.meters-info span:nth-child(2n){
+  background: #f69200;
+}
+span.meters-info-title {
+  font-size: 11px;
+  background: #1fb6b6;
+  letter-spacing: 0.1em;
+}
+span.meters-info-title:nth-child(2n){
+  background-color: #4edf44b5;
 }
 </style>

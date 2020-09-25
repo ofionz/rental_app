@@ -14,9 +14,19 @@
 
 
         <div v-if="tenant.meters[date]&&tenant.meters[lastMonthDate]">
-          <h6 class="tenant-name">
+          <div class="tenant-name_wrap">     <h6 class="tenant-name">
             {{ tenant.info.name }}
           </h6>
+            <div class="tenant-meter tenant-meter_2-col">
+              <span class="tenant-meter-title">Сумма</span>
+              <span class="tenant-meter-title">Долг</span>
+              <span class="tenant-meter-title-total_sum">
+            {{ calcAmount(tenant) }}</span
+              >
+              <span class="tenant-meter-title-total_duty">
+            {{ calcDebtAmount(tenant) }}</span
+              >
+            </div></div>
         <div
           v-for="(meter, index) in tenant.meters[date]"
           :key="index"
@@ -36,26 +46,15 @@
           >
           </div>
 
-
-        <div class="tenant-meter tenant-meter_2-col">
-          <span class="tenant-meter-title">Сумма</span>
-          <span class="tenant-meter-title">Долг</span>
-          <span class="tenant-meter-title-total_sum">
-            {{ calcAmount(tenant) }}</span
-          >
-          <span class="tenant-meter-title-total_duty">
-            {{ calcDebtAmount(tenant) }}</span
-          >
-        </div>
         </div>
       </div>
     </section>
   </div>
 </template>
 <script>
-import MonthChooser from "../components/app/MonthChooser";
+  import MonthChooser from "../components/app/MonthChooser";
 
-export default {
+  export default {
   name: "Electricity",
   components: { MonthChooser },
   data: () => ({
@@ -109,10 +108,8 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
-.info-table-row h6 {
-  margin: 0 0 5px;
-  font-weight: bold;
+.info-table-row:not(:last-child){
+  margin-bottom: 20px;
 }
 
 .tenant-meter {
@@ -125,25 +122,51 @@ export default {
   grid-template-columns: 1fr 1fr;
   width: 10em;
   align-self: flex-end;
+  text-align: center!important;
 }
 
 .tenant-meter span {
-  background: #e9e9e9;
+  background: rgb(31 182 182);
   padding: 4px;
   font-size: 12px;
+  color: #ffffff;
+  border-radius: 5px;
+  letter-spacing: 0.025rem;
 }
 
 .tenant-meter-title {
   font-size: 11px;
-  height: 20px;
+  height: 15px;
   background: transparent !important;
+  color: #000000!important;
+  font-style: italic;
 }
 
 .tenant-meter-title-total_sum {
-  background: #97e9ed !important;
+  background:  #4edf44b5 !important;
 }
 
 .tenant-meter-title-total_duty {
-  background: #ff5454 !important;
+  background: #e70c04 !important;
+}
+
+.tenant-name_wrap{
+  display: grid;
+  grid-template-columns: repeat(2, 130px);
+  gap: 5px;
+  margin-bottom: 15px;
+  align-items: end;
+}
+.tenant-name{
+  margin: 0 20px 0 0;
+  text-transform: uppercase;
+  color: #3b3b3b;
+  box-shadow: 0 0 8px 0 #e7e7e7;
+  text-align: center;
+  padding: 5px;
+  border-radius: 5px;
+  font-family: 'Poiret One', cursive;
+  font-weight: bold;
+  letter-spacing: 0.2em;
 }
 </style>
