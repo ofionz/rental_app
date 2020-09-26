@@ -316,6 +316,11 @@ export default {
             meters
           });
         } else if (this.type === "rent" && this.innertype === "expense") {
+          if(Number(this.amount)>this.calcFreeMoney(this.date)||Number(this.amount)>this.calcDebtToTheLandlord()){
+            this.$message("Остаток меньше выплаты или больше долга перед арендодателем.");
+            return ;
+          }
+
           const type = "landlords";
           const id = this.currentLandlord;
           const paymentInfo = {
@@ -331,7 +336,10 @@ export default {
             date,
             paymentInfo
           });
+
         }
+        this.tenants = await this.$store.dispatch("fetchTenants");
+        this.landlords = await this.$store.dispatch("fetchLandlords");
       } catch (e) {
         this.$error("Запись не добавлена!.");
       }

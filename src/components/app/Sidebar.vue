@@ -49,7 +49,6 @@ export default {
   }),
   methods: {
     hideSidebar (){
-      console.log("123");
       this.$emit("hideSidebar");
     }
   },

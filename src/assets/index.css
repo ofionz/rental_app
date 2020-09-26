@@ -240,7 +240,6 @@ font-family: 'Bellota Text', cursive;
 }
 .card-title{
   color: #000;
-  text-transform: uppercase;
     margin-bottom: 20px;
     font-family: 'Bellota Text', cursive;
 }
@@ -282,7 +281,8 @@ font-family: 'Bellota Text', cursive;
   padding: 0!important;
 }
 .btn, .btn-large, .btn-small {
-  background:  #1fb6b6!important;;
+  background:  #1fb6b6!important;
+    margin: 0 10px 10px 0;
 }
 .card-title-white{
     color:#fff!important;
@@ -295,7 +295,7 @@ font-family: 'Bellota Text', cursive;
     background-color: #1fb6b6 !important;
 }
 .orange.darken-3 {
-    background-color: #dfa644  !important;
+    background-color: #df5d44ed  !important;
 }
 
 .page-title{
@@ -310,5 +310,22 @@ font-family: 'Bellota Text', cursive;
 .page-title h3{
     margin-bottom: 15px!important;
 }
+.auth-card {
+    width: auto;
+}
+.messageToast{
+    background: #f69200;
+}
+.errorToast{
+    background: #e70c04;
+}
+@media only screen and (min-width: 993px){
+    #toast-container {
+        top: 51%!important;
+        right: 38%!important;
+        max-width: 86%!important;
+    }
+}
+
 
 

@@ -4,7 +4,9 @@
       <div class="card-content white-text">
         <div class="card-header">
           <router-link tag="span" to="/tenants">
-            <span style="cursor: pointer" class="card-title card-title-white">Арендаторы</span>
+            <span style="cursor: pointer" class="card-title card-title-white"
+              >Арендаторы</span
+            >
           </router-link>
         </div>
         <table>
@@ -30,9 +32,11 @@
                 }}</a>
               </td>
               <td>
-                <a class="refs" :href="'record/?type=electricity&id=' + tenant.id">{{
-                  calcElectrDebtAmount(tenant)
-                }}</a>
+                <a
+                  class="refs"
+                  :href="'record/?type=electricity&id=' + tenant.id"
+                  >{{ calcElectrDebtAmount(tenant) }}</a
+                >
               </td>
               <td>
                 {{ calcDebtTenant(tenant) + calcElectrDebtAmount(tenant) }}

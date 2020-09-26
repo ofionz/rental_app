@@ -27,8 +27,9 @@
     date: ""
   }),
   async mounted() {
-    this.setPaymentData(this.date);
     await this.$store.dispatch("fetchTenants");
+    await this.$store.dispatch("fetchLandlords");
+    this.setPaymentData(this.date);
     this.loading = false;
   },
   methods: {
@@ -79,6 +80,6 @@
 </script>
 <style>
   .history-list{
-    overflow: scroll;
+    overflow: hidden;
   }
 </style>

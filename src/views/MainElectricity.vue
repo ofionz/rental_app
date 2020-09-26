@@ -45,13 +45,26 @@
         </select>
         <label>Выберите помещение</label>
       </div>
-      <div v-if="type === 'info' && lastMonthReadings && readings"  class="meters-info">
-        <span class="meters-info-title">Реальные показания</span>
-        <span class="meters-info-title">Показания за пр.месяц</span>
-        <span class="meters-info-title">Текущие показания</span>
-        <span class="meters-info-title">Разница показаний</span>
-        <span class="meters-info-title">Разница показаний с потерями</span>
-        <span> {{ readings.real_readings }}</span>
+      <div v-if="type === 'info' && lastMonthReadings && readings" >
+        <p>
+          <label>
+            <input
+              class="with-gap"
+              name="type"
+              type="checkbox"
+              v-model="show_real"
+            />
+            <span>Отобразить реальные показания</span>
+          </label>
+        </p>
+      <div  class="meters-info" :class="[show_real ? 'column_5' : 'column_4']">
+
+        <span v-if="show_real" class="meters-info-title">Реальные показ.</span>
+        <span class="meters-info-title">Показ. за пр.месяц</span>
+        <span class="meters-info-title">Текущие показ.</span>
+        <span class="meters-info-title">Разница показ.</span>
+        <span class="meters-info-title">Разница показ. с коэф.</span>
+        <span  v-if="show_real"> {{ readings.real_readings }}</span>
         <span> {{ lastMonthReadings.readings }}</span>
         <span> {{ readings.readings }}</span>
         <span> {{ readings.readings - lastMonthReadings.readings }}</span>
@@ -67,7 +80,7 @@
           }}</span
         >
       </div>
-
+      </div>
       <div v-else-if="type === 'readings' && lastMonthReadings">
         <div class="info-section">
           <label
@@ -143,6 +156,7 @@
   data: () => ({
     date: "",
     current: null,
+    show_real: false,
     coefficient: 0,
     loading: true,
     mainMeters: {},
@@ -254,21 +268,28 @@
   display: flex;
   justify-content: space-between;
 }
+.column_5 {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+}
+.column_4 {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+}
+
 .meters-info{
-    display: grid;
-    grid-template-columns: repeat(5, auto);
     background: #ffa726;
     color: #fff;
   font-weight: bold;
 }
 .meters-info span{
   padding: 10px;
+  font-size: 10px;
 }
 .meters-info span:nth-child(2n){
   background: #f69200;
 }
 span.meters-info-title {
-  font-size: 11px;
   background: #1fb6b6;
   letter-spacing: 0.1em;
 }

@@ -1,25 +1,50 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>Редактирование записи</h3>
+      <h3 v-if="!isAdmin">Запись</h3>
+      <h3 v-else>Редактирование записи</h3>
     </div>
     <Loader v-if="loading"></Loader>
     <div v-else class="form">
       <div class="input-field">
-        <input id="amount" type="number" v-model="payment.amount" />
+        <input
+          :disabled="!isAdmin"
+          id="amount"
+          type="number"
+          v-model="payment.amount"
+        />
         <label class="active" for="amount">Сумма</label>
       </div>
 
       <div class="input-field">
-        <input id="description" type="text" v-model="payment.description" />
+        <input
+          :disabled="!isAdmin"
+          id="description"
+          type="text"
+          v-model="payment.description"
+        />
         <label class="active" for="description">Описание</label>
       </div>
-
-      <button class="btn waves-effect waves-light" v-on:click="updatePayment()">
+      <button
+        class="btn waves-effect waves-light"
+        @click="$router.push('/history/')"
+      >
+        Назад
+        <i class="material-icons right">keyboard_backspace</i>
+      </button>
+      <button
+        v-if="isAdmin"
+        class="btn waves-effect waves-light"
+        v-on:click="updatePayment()"
+      >
         Обновить
         <i class="material-icons right">update</i>
       </button>
-      <button class="btn waves-effect waves-light" v-on:click="deletePayment()">
+      <button
+        v-if="isAdmin"
+        class="btn waves-effect waves-light"
+        v-on:click="deletePayment()"
+      >
         Удалить
         <i class="material-icons right">delete</i>
       </button>
@@ -32,7 +57,8 @@ export default {
   data: () => ({
     loading: true,
     payment: null,
-    params: null
+    params: null,
+    isAdmin: false
   }),
   methods: {
     async deletePayment() {
@@ -57,6 +83,7 @@ export default {
     }
   },
   async mounted() {
+    this.isAdmin = this.$store.getters.user.admin;
     this.params = {
       type: this.$route.params.type,
       id: this.$route.params.id,

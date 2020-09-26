@@ -1,37 +1,37 @@
 <template>
   <table>
     <thead>
-      <tr  class="payments-table">
+      <tr class="payments-table">
         <th>Имя</th>
         <th>Тип платежа</th>
         <th>Сумма</th>
         <th>Дата</th>
         <th>Ответственный</th>
         <th>Описание</th>
-        <th></th>
       </tr>
     </thead>
 
     <tbody>
-      <tr v-for="(payment, index) of payments" :key="index" class="payments-table">
+      <tr
+        v-for="(payment, index) of payments"
+        :key="index"
+        class="payments-table"
+        :class="payment.type"
+        @click="
+          $router.push(
+            `/detail/${formatType(payment.type)}/${payment.id}/${
+              payment.date
+            }/${payment.paymentId}`
+          )
+        "
+      >
         <td>{{ payment.name }}</td>
-        <td> {{ typeToString(payment.type) }}</td>
+        <td>{{ typeToString(payment.type) }}</td>
         <td>{{ payment.amount }}</td>
         <td>{{ payment.paymentDate | date("shortDT") }}</td>
         <td>{{ gerUserName(payment.recipient) }}</td>
         <td>{{ payment.description }}</td>
-        <td>
-          <button
-            class="btn-small btn"
-            @click="
-              $router.push(
-                `/detail/${formatType(payment.type)}/${payment.id}/${payment.date}/${payment.paymentId}`
-              )
-            "
-          >
-            <i class="material-icons">edit</i>
-          </button>
-        </td>
+
       </tr>
     </tbody>
   </table>
@@ -45,15 +45,15 @@ export default {
     payments: { type: Array, required: true }
   },
   methods: {
-    formatType(type){
-      if(type==='landlords'){
+    formatType(type) {
+      if (type === "landlords") {
         return type;
-      } else return 'tenants'
+      } else return "tenants";
     },
     typeToString(type) {
       switch (type) {
         case "rent":
-          return 'Аренда' ;
+          return "Аренда";
         case "electricity":
           return "Свет";
         case "landlords":
@@ -73,8 +73,17 @@ export default {
 </script>
 
 <style scoped>
-  .payments-table{
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
+.electricity {
+  background: #ffa726b8;
+}
+.rent {
+  background: #df5d44a8;
+}
+.landlords {
+  background: #1fb6b682;
+}
+.payments-table {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
 }
 </style>
