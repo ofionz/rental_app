@@ -69,7 +69,6 @@
         v-show="innertype === 'expense' && type === 'rent'"
         class="input-field"
       >
-
         <select v-model="currentLandlord" ref="select2">
           <option
             v-for="landlord of landlords"
@@ -79,7 +78,10 @@
             {{ landlord.info.name }}</option
           >
         </select>
-        <label>Свободные деньги: {{calcFreeMoney(date)}} руб., к выплате еще: {{calcDebtToTheLandlord()}} руб. <br>Выберите арендодателя </label>
+        <label
+          >Свободные деньги: {{ calcFreeMoney(date) }} руб., к выплате еще:
+          {{ calcDebtToTheLandlord() }} руб. <br />Выберите арендодателя
+        </label>
       </div>
       <div v-if="type === 'rent'" class="checkBoxContainer">
         <p>
@@ -200,11 +202,10 @@ export default {
     rawDate: new Date(),
     data: "",
     lastMonthMeters: null,
-    allMeters: null,
+    allMeters: null
   }),
   validations: {
     amount: { required, minValue: minValue(0) }
-
   },
   components: { MonthChooser },
   computed: {
@@ -242,7 +243,9 @@ export default {
       this.name = info.name;
       this.kilowatt = info.kilowatt;
       this.allMeters = meters;
-      this.lastMonthMeters = this.allMeters[this.subtractMonth(this.rawDate)];
+      this.lastMonthMeters = meters
+        ? this.allMeters[this.subtractMonth(this.rawDate)]
+        : {};
     },
     currentLandlord(tenId) {
       const { id, info } = this.landlords.find(t => t.id === tenId);
@@ -251,12 +254,11 @@ export default {
     }
   },
   methods: {
-    calcDebtToTheLandlord(){
+    calcDebtToTheLandlord() {
       const landlord = this.landlords.find(t => t.id === this.currentLandlord);
       return (
         this.$calcLandlordRentAmount(landlord) -
         this.$calcPaidAmount(landlord, this.date)
-
       );
     },
     calcFreeMoney(date) {
@@ -316,9 +318,14 @@ export default {
             meters
           });
         } else if (this.type === "rent" && this.innertype === "expense") {
-          if(Number(this.amount)>this.calcFreeMoney(this.date)||Number(this.amount)>this.calcDebtToTheLandlord()){
-            this.$message("Остаток меньше выплаты или больше долга перед арендодателем.");
-            return ;
+          if (
+            Number(this.amount) > this.calcFreeMoney(this.date) ||
+            Number(this.amount) > this.calcDebtToTheLandlord()
+          ) {
+            this.$message(
+              "Остаток меньше выплаты или больше долга перед арендодателем."
+            );
+            return;
           }
 
           const type = "landlords";
@@ -336,7 +343,6 @@ export default {
             date,
             paymentInfo
           });
-
         }
         this.tenants = await this.$store.dispatch("fetchTenants");
         this.landlords = await this.$store.dispatch("fetchLandlords");
@@ -373,8 +379,7 @@ export default {
         );
         this.currentLandlord = id;
         this.name = info.name;
-      }
-      else if (this.$route.query.type == "rent") {
+      } else if (this.$route.query.type == "rent") {
         this.type = "rent";
         this.innertype = "income";
         const { id, info } = this.tenants.find(
@@ -382,8 +387,7 @@ export default {
         );
         this.current = id;
         this.name = info.name;
-      }
-      else if (this.$route.query.type == "electricity") {
+      } else if (this.$route.query.type == "electricity") {
         this.type = "electricity";
         this.innertype = "income";
         const { id, info } = this.tenants.find(
@@ -392,7 +396,6 @@ export default {
         this.current = id;
         this.name = info.name;
       }
-
     }
 
     setTimeout(() => {

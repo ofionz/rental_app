@@ -83,7 +83,7 @@ export default {
     },
     calcAmount(tenant) {
       let amount = 0;
-      if (tenant.payments && tenant.payments[this.date]) {
+      if (tenant.meters && tenant.meters[this.date]) {
         for (const key of Object.keys(tenant.meters[this.date])) {
           amount +=
             (tenant.meters[this.date][key].readings -
