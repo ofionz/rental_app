@@ -11,10 +11,10 @@
 </template>
 
 <script>
-  import Datepicker from "vuejs-datepicker";
-  import {ru} from "vuejs-datepicker/dist/locale";
+import Datepicker from "vuejs-datepicker";
+import { ru } from "vuejs-datepicker/dist/locale";
 
-  export default {
+export default {
   name: "MonthChooser",
   components: {
     Datepicker
@@ -28,10 +28,12 @@
   methods: {
     changedMonth() {
       this.$emit("changedMonth", this.date);
+    },
+    setDate: function (date) {
+     this.date = date
     }
   }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

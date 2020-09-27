@@ -39,7 +39,7 @@
                 >
               </td>
               <td>
-                {{ calcDebtTenant(tenant) + calcElectrDebtAmount(tenant) }}
+                {{ (typeof calcElectrDebtAmount(tenant)==='number')?calcDebtTenant(tenant)+calcElectrDebtAmount(tenant):calcDebtTenant(tenant)}}
               </td>
             </tr>
           </tbody>
@@ -91,14 +91,14 @@ export default {
     },
     calcElectrAmount(tenant) {
       let amount = 0;
-      if (tenant.meters && tenant.meters[this.date]) {
+      if (tenant.meters && tenant.meters[this.date]&&tenant.meters[this.lastMonthDate]) {
         for (const key of Object.keys(tenant.meters[this.date])) {
           amount +=
             (tenant.meters[this.date][key].readings -
               tenant.meters[this.lastMonthDate][key].readings) *
             tenant.info.kilowatt;
         }
-      }
+      }  else amount = "Показ. нет";
       return amount;
     },
     calcDebtTenant(tenant) {

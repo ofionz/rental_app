@@ -6,7 +6,10 @@
     <Loader v-if="loading"></Loader>
     <p class="center" v-else-if="!tenants.length">Арендаторов нет</p>
     <form v-else class="form" @submit.prevent="submitHandler">
-      <MonthChooser @changedMonth="changeMonth"></MonthChooser>
+      <MonthChooser
+        ref="monthChooser"
+        @changedMonth="changeMonth"
+      ></MonthChooser>
       <div class="checkBoxContainer">
         <p>
           <label>
@@ -28,6 +31,7 @@
               name="type"
               type="radio"
               value="electricity"
+              @click="addMonthElectr()"
               v-model="type"
             />
             <span>Свет</span>
@@ -40,6 +44,7 @@
               name="type"
               type="radio"
               value="readings"
+              @click="addMonth()"
               v-model="type"
             />
             <span>Показания</span>
@@ -202,7 +207,8 @@ export default {
     rawDate: new Date(),
     data: "",
     lastMonthMeters: null,
-    allMeters: null
+    allMeters: null,
+    initDate: ""
   }),
   validations: {
     amount: { required, minValue: minValue(0) }
@@ -254,6 +260,58 @@ export default {
     }
   },
   methods: {
+    calcElectrDebtAmount(tenant) {
+      let debtAmount = this.calcElectrAmount(tenant);
+      if (tenant.payments && tenant.payments[this.date]) {
+        for (const key of Object.keys(tenant.payments[this.date])) {
+          if (tenant.payments[this.date][key].type === "electricity")
+            debtAmount -= tenant.payments[this.date][key].amount;
+        }
+      }
+      return debtAmount;
+    },
+    calcElectrAmount(tenant) {
+      let amount = 0;
+      if (tenant.meters && tenant.meters[this.date]&&tenant.meters[this.subtractMonth(this.rawDate)]) {
+        for (const key of Object.keys(tenant.meters[this.date])) {
+          amount +=
+            (tenant.meters[this.date][key].readings -
+              tenant.meters[this.subtractMonth(this.rawDate)][key].readings) *
+            tenant.info.kilowatt;
+        }
+      } else amount = "Показ. нет";
+      return amount;
+    },
+    addMonthElectr() {
+      const date = new Date();
+      let tenant = this.tenants.find(t => t.id === this.current);
+      if (
+        date.getDate() >= 23 &&
+        date.getMonth() === this.rawDate.getMonth() &&
+        this.calcElectrDebtAmount(tenant) === 0
+      ) {
+        const newDate = new Date(date.setMonth(date.getMonth() + 1));
+        this.$refs.monthChooser.setDate(newDate);
+        this.$message(
+          "В этом месяце свет оплачен. <br> Месяц изменен на следующий."
+        );
+      }
+    },
+    addMonth() {
+      const date = new Date();
+      const { meters } = this.tenants.find(t => t.id === this.current);
+      if (
+        date.getDate() >= 23 &&
+        date.getMonth() === this.rawDate.getMonth() &&
+        meters[this.date]
+      ) {
+        const newDate = new Date(date.setMonth(date.getMonth() + 1));
+        this.$refs.monthChooser.setDate(newDate);
+        this.$message(
+          "Показания за текущий месяц уже есть.<br> Месяц изменен на следующий."
+        );
+      }
+    },
     calcDebtToTheLandlord() {
       const landlord = this.landlords.find(t => t.id === this.currentLandlord);
       return (
@@ -312,6 +370,14 @@ export default {
           });
         } else if (this.type === "readings") {
           const meters = this.meters;
+        for (let meter in meters){
+          if (!meters[meter].readings||meters[meter].readings<0){
+            this.$message(
+              "Показания не заполнены или меньше нуля"
+            );
+            return
+          }
+        }
           await this.$store.dispatch("createMeterRecord", {
             id,
             date,
