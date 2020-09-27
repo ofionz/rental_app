@@ -22,24 +22,31 @@
           <tbody>
             <tr v-for="tenant in tenantsWithDebt" :key="tenant.id">
               <td>
-                <a class="refs" :href="'tenants/?id=' + tenant.id">{{
-                  tenant.info.name
-                }}</a>
+                <router-link tag="span" :to="'tenants/?id=' + tenant.id">
+                  <span style="cursor: pointer">{{ tenant.info.name }}</span>
+                </router-link>
               </td>
               <td>
-                <a class="refs" :href="'record/?type=rent&id=' + tenant.id">{{
-                  calcDebtTenant(tenant)
-                }}</a>
+                <router-link tag="span" :to="'record/?type=rent&id=' + tenant.id">
+                  <span style="cursor: pointer">{{ calcDebtTenant(tenant)}}</span>
+                </router-link>
               </td>
               <td>
-                <a
-                  class="refs"
-                  :href="'record/?type=electricity&id=' + tenant.id"
-                  >{{ calcElectrDebtAmount(tenant) }}</a
+                <router-link
+                  tag="span"
+                  :to="'record/?type=electricity&id=' + tenant.id"
                 >
+                  <span style="cursor: pointer">{{
+                    calcElectrDebtAmount(tenant)
+                  }}</span>
+                </router-link>
               </td>
               <td>
-                {{ (typeof calcElectrDebtAmount(tenant)==='number')?calcDebtTenant(tenant)+calcElectrDebtAmount(tenant):calcDebtTenant(tenant)}}
+                {{
+                  typeof calcElectrDebtAmount(tenant) === "number"
+                    ? calcDebtTenant(tenant) + calcElectrDebtAmount(tenant)
+                    : calcDebtTenant(tenant)
+                }}
               </td>
             </tr>
           </tbody>
@@ -91,14 +98,18 @@ export default {
     },
     calcElectrAmount(tenant) {
       let amount = 0;
-      if (tenant.meters && tenant.meters[this.date]&&tenant.meters[this.lastMonthDate]) {
+      if (
+        tenant.meters &&
+        tenant.meters[this.date] &&
+        tenant.meters[this.lastMonthDate]
+      ) {
         for (const key of Object.keys(tenant.meters[this.date])) {
           amount +=
             (tenant.meters[this.date][key].readings -
               tenant.meters[this.lastMonthDate][key].readings) *
             tenant.info.kilowatt;
         }
-      }  else amount = "Показ. нет";
+      } else amount = "Показ. нет";
       return amount;
     },
     calcDebtTenant(tenant) {

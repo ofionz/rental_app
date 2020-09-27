@@ -8,9 +8,16 @@
           :key="landlord.info.name"
           class="currency-line"
         >
-          <span
-            ><a class="refs" :href="'record/?type=landlords&'+'id='+landlord.id">{{ landlord.info.name }} :
-            {{ calcDebtToTheLandlord(landlord, date) }}</a>
+          <span>
+            <router-link
+              tag="span"
+              :to="'record/?type=landlords&' + 'id=' + landlord.id"
+            >
+              <span style="cursor: pointer"
+                >{{ landlord.info.name }} :
+                {{ calcDebtToTheLandlord(landlord, date) }}</span
+              >
+            </router-link>
           </span>
         </p>
       </div>
@@ -25,7 +32,7 @@ export default {
     landlords: {
       required: true
     },
-    date:{
+    date: {
       required: true
     }
   },
@@ -34,7 +41,6 @@ export default {
       return (
         this.$calcLandlordRentAmount(landlord) -
         this.$calcPaidAmount(landlord, date)
-
       );
     }
   }
@@ -42,7 +48,7 @@ export default {
 </script>
 
 <style scoped>
-  .refs{
-    color: inherit;
-  }
+.refs {
+  color: inherit;
+}
 </style>
