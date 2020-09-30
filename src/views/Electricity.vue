@@ -10,6 +10,7 @@
         v-for="(tenant, index) in tenants"
         :key="index"
         class="info-table-row"
+        :class="{ notActive: calcDebtAmount(tenant) === 0 }"
       >
         <div v-if="isMetersExist(tenant)">
           <div class="tenant-name_wrap">
@@ -64,12 +65,18 @@ export default {
 
   async mounted() {
     this.tenants = await this.$store.dispatch("fetchTenants");
+
+    this.tenants.sort((a,b)=>{return this.calcDebtAmount(b)- this.calcDebtAmount(a)})
     this.loading = false;
   },
   methods: {
-    isMetersExist(tenant){
-  return (tenant.meters!==undefined)&&(tenant.meters[this.date]!==undefined) && (tenant.meters[this.lastMonthDate]!==undefined);
-},
+    isMetersExist(tenant) {
+      return (
+        tenant.meters !== undefined &&
+        tenant.meters[this.date] !== undefined &&
+        tenant.meters[this.lastMonthDate] !== undefined
+      );
+    },
 
     calcDebtAmount(tenant) {
       let debtAmount = this.calcAmount(tenant);
@@ -106,6 +113,9 @@ export default {
 };
 </script>
 <style scoped>
+  .notActive {
+    opacity: 0.4;
+  }
 .info-table-row {
   display: flex;
   flex-direction: column;
