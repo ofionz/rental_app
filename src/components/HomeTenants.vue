@@ -27,14 +27,14 @@
                 </router-link>
               </td>
               <td>
-                <router-link tag="span" :to="'record/?type=rent&id=' + tenant.id">
+                <router-link tag="span" :to="`record/?type=rent&id=${tenant.id}&date=${date}`">
                   <span style="cursor: pointer">{{ calcDebtTenant(tenant)}}</span>
                 </router-link>
               </td>
               <td>
                 <router-link
                   tag="span"
-                  :to="'record/?type=electricity&id=' + tenant.id"
+                  :to="`record/?type=electricity&id=${tenant.id}&date=${date}`"
                 >
                   <span style="cursor: pointer">{{
                     calcElectrDebtAmount(tenant)

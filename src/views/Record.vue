@@ -61,12 +61,9 @@
         class="input-field"
       >
         <select v-model="current" ref="select">
-          <option
-            v-for="tenant of tenants"
-            :key="tenant.id"
-            :value="tenant.id"
-            >{{ tenant.info.name }}</option
-          >
+          <option v-for="tenant of tenants" :key="tenant.id" :value="tenant.id"
+            >{{ tenant.info.name }}
+          </option>
         </select>
         <label>Выберите арендатора</label>
       </div>
@@ -80,8 +77,8 @@
             :key="landlord.id"
             :value="landlord.id"
           >
-            {{ landlord.info.name }}</option
-          >
+            {{ landlord.info.name }}
+          </option>
         </select>
         <label
           >Свободные деньги: {{ calcFreeMoney(date) }} руб., к выплате еще:
@@ -116,6 +113,9 @@
         </p>
       </div>
       <div v-if="type === 'rent' || type === 'electricity'">
+        <label
+        >Долг аренды: {{ calcDebtTenant(getTenantById(current)) }} руб., Долг свет: {{calcElectrDebtAmount(getTenantById(current))}}
+        </label>
         <div class="input-field">
           <input
             :class="{
@@ -189,6 +189,7 @@
 <script>
 import MonthChooser from "../components/app/MonthChooser";
 import { required, minValue } from "vuelidate/lib/validators";
+
 export default {
   name: "Record",
   data: () => ({
@@ -260,6 +261,12 @@ export default {
     }
   },
   methods: {
+    getTenantById(id){
+      let tenant = this.tenants.find(
+        t => t.id === id
+      );
+      return tenant
+    },
     calcElectrDebtAmount(tenant) {
       let debtAmount = this.calcElectrAmount(tenant);
       if (tenant.payments && tenant.payments[this.date]) {
@@ -272,7 +279,11 @@ export default {
     },
     calcElectrAmount(tenant) {
       let amount = 0;
-      if (tenant.meters && tenant.meters[this.date]&&tenant.meters[this.subtractMonth(this.rawDate)]) {
+      if (
+        tenant.meters &&
+        tenant.meters[this.date] &&
+        tenant.meters[this.subtractMonth(this.rawDate)]
+      ) {
         for (const key of Object.keys(tenant.meters[this.date])) {
           amount +=
             (tenant.meters[this.date][key].readings -
@@ -301,7 +312,7 @@ export default {
       const date = new Date();
       const { meters } = this.tenants.find(t => t.id === this.current);
       if (
-        date.getDate() >= 23 &&
+        date.getDate() >= 21 &&
         date.getMonth() === this.rawDate.getMonth() &&
         meters[this.date]
       ) {
@@ -319,6 +330,9 @@ export default {
         this.$calcPaidAmount(landlord, this.date)
       );
     },
+    calcDebtTenant(tenant) {
+      return tenant.info.rent - this.$calcPaidAmount(tenant, this.date);
+    },
     calcFreeMoney(date) {
       let freeMoney = 0;
       for (let tenant in this.tenants) {
@@ -328,6 +342,13 @@ export default {
         freeMoney -= this.$calcPaidAmount(this.landlords[landlord], date);
       }
       return freeMoney;
+    },
+    setRentDate(string) {
+      let arr = string.split("_");
+      let date = new Date();
+      date.setMonth(Number(arr[1]) - 1);
+      date.setFullYear(Number(arr[2]));
+      this.$nextTick(function () {this.$refs.monthChooser.setDate(date);})
     },
     subtractMonth(rawDate) {
       const date = new Date(rawDate);
@@ -370,14 +391,12 @@ export default {
           });
         } else if (this.type === "readings") {
           const meters = this.meters;
-        for (let meter in meters){
-          if (!meters[meter].readings||meters[meter].readings<0){
-            this.$message(
-              "Показания не заполнены или меньше нуля"
-            );
-            return
+          for (let meter in meters) {
+            if (!meters[meter].readings || meters[meter].readings < 0) {
+              this.$message("Показания не заполнены или меньше нуля");
+              return;
+            }
           }
-        }
           await this.$store.dispatch("createMeterRecord", {
             id,
             date,
@@ -448,6 +467,7 @@ export default {
       } else if (this.$route.query.type == "rent") {
         this.type = "rent";
         this.innertype = "income";
+        this.setRentDate(this.$route.query.date);
         const { id, info } = this.tenants.find(
           t => t.id === this.$route.query.id
         );
@@ -488,6 +508,7 @@ export default {
   display: flex;
   justify-content: space-between;
 }
+
 .info-section {
   display: flex;
   justify-content: space-between;

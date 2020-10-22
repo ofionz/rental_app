@@ -6,7 +6,7 @@
     <Loader v-if="loading"></Loader>
     <p class="center" v-else-if="!mainMeters.length">Арендаторов нет</p>
     <form v-else class="form" @submit.prevent="submitHandler">
-      <MonthChooser @changedMonth="changeMonth"></MonthChooser>
+      <MonthChooser ref="monthChooser" @changedMonth="changeMonth"></MonthChooser>
       <div class="checkBoxContainer">
         <p>
           <label>
@@ -28,6 +28,7 @@
               type="radio"
               value="readings"
               v-model="type"
+              @click="addMonth"
             />
             <span>Новая запись</span>
           </label>
@@ -45,7 +46,7 @@
         </select>
         <label>Выберите помещение</label>
       </div>
-      <div v-if="type === 'info' && lastMonthReadings && readings" >
+      <div v-if="type === 'info' && lastMonthReadings && readings">
         <p>
           <label>
             <input
@@ -57,29 +58,30 @@
             <span>Отобразить реальные показания</span>
           </label>
         </p>
-      <div  class="meters-info" :class="[show_real ? 'column_5' : 'column_4']">
-
-        <span v-if="show_real" class="meters-info-title">Реальные показ.</span>
-        <span class="meters-info-title">Показ. за пр.месяц</span>
-        <span class="meters-info-title">Текущие показ.</span>
-        <span class="meters-info-title">Разница показ.</span>
-        <span class="meters-info-title">Разница показ. с коэф.</span>
-        <span  v-if="show_real"> {{ readings.real_readings }}</span>
-        <span> {{ lastMonthReadings.readings }}</span>
-        <span> {{ readings.readings }}</span>
-        <span> {{ readings.readings - lastMonthReadings.readings }}</span>
-        <span>
-          {{
-            Math.floor(
-              (readings.readings -
-                lastMonthReadings.readings +
-                (readings.readings - lastMonthReadings.readings) *
-                  coefficient) *
-                100
-            ) / 100
-          }}</span
-        >
-      </div>
+        <div class="meters-info" :class="[show_real ? 'column_5' : 'column_4']">
+          <span v-if="show_real" class="meters-info-title"
+            >Реальные показ.</span
+          >
+          <span class="meters-info-title">Показ. за пр.месяц</span>
+          <span class="meters-info-title">Текущие показ.</span>
+          <span class="meters-info-title">Разница показ.</span>
+          <span class="meters-info-title">Разница показ. с коэф.</span>
+          <span v-if="show_real"> {{ readings.real_readings }}</span>
+          <span> {{ lastMonthReadings.readings }}</span>
+          <span> {{ readings.readings }}</span>
+          <span> {{ readings.readings - lastMonthReadings.readings }}</span>
+          <span>
+            {{
+              Math.floor(
+                (readings.readings -
+                  lastMonthReadings.readings +
+                  (readings.readings - lastMonthReadings.readings) *
+                    coefficient) *
+                  100
+              ) / 100
+            }}</span
+          >
+        </div>
       </div>
       <div v-else-if="type === 'readings' && lastMonthReadings">
         <div class="info-section">
@@ -148,10 +150,10 @@
   </div>
 </template>
 <script>
-  import MonthChooser from "../components/app/MonthChooser";
-  import {minValue, required} from "vuelidate/lib/validators";
+import MonthChooser from "../components/app/MonthChooser";
+import { minValue, required } from "vuelidate/lib/validators";
 
-  export default {
+export default {
   name: "MainElectricity",
   data: () => ({
     date: "",
@@ -197,6 +199,21 @@
     }
   },
   methods: {
+    addMonth() {
+      const date = new Date();
+      const { readings } = this.mainMeters.find(t => t.id === this.current);
+      if (
+        date.getDate() >= 21 &&
+        date.getMonth() === this.rawDate.getMonth() &&
+        readings[this.date]
+      ) {
+        const newDate = new Date(date.setMonth(date.getMonth() + 1));
+        this.$refs.monthChooser.setDate(newDate);
+        this.$message(
+          "Показания за текущий месяц уже есть.<br> Месяц изменен на следующий."
+        );
+      }
+    },
     subtractMonth(rawDate) {
       const date = new Date(rawDate);
       const newDate = new Date(date.setMonth(date.getMonth() - 1));
@@ -206,9 +223,11 @@
       this.date = this.$options.filters.date(newDate, "string");
       if (this.rawDate.getMonth() !== newDate.getMonth()) {
         this.lastMonthReadings = this.allReadings[this.subtractMonth(newDate)];
+
         this.readings = this.allReadings[
           this.$options.filters.date(newDate, "string")
         ];
+        if(!this.readings) this.readings = { readings: 0, real_readings: 0 };
         this.rawDate = newDate;
       }
     },
@@ -277,23 +296,23 @@
   grid-template-columns: repeat(4, auto);
 }
 
-.meters-info{
-    background: #ffa726;
-    color: #fff;
+.meters-info {
+  background: #ffa726;
+  color: #fff;
   font-weight: bold;
 }
-.meters-info span{
+.meters-info span {
   padding: 10px;
   font-size: 10px;
 }
-.meters-info span:nth-child(2n){
+.meters-info span:nth-child(2n) {
   background: #f69200;
 }
 span.meters-info-title {
   background: #1fb6b6;
   letter-spacing: 0.1em;
 }
-span.meters-info-title:nth-child(2n){
+span.meters-info-title:nth-child(2n) {
   background-color: #4edf44b5;
 }
 </style>
