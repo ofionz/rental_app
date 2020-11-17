@@ -28,7 +28,7 @@ const router = new Router({
       component: () => import("./views/Register.vue")
     },
     {
-      path: "/tenants/",
+      path: "/tenants",
       name: "tenants",
       meta: { layout: "main", admin: false },
       component: () => import("./views/Tenants.vue")

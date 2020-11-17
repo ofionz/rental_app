@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>Профиль</h3>
+      <h3>Профиль пользователя</h3>
     </div>
 
     <form class="form">

@@ -161,20 +161,20 @@
         </div>
         <div class="input-field">
           <input
-            id="descriptionReadings"
-            v-model="meters[index].descriptionReadings"
-            type="text"
-          />
-          <label for="descriptionReadings">Описание</label>
-        </div>
-        <div class="input-field">
-          <input
             id="readings"
             type="number"
             @keyup="$forceUpdate()"
             v-model="meters[index].readings"
           />
           <label for="readings">Текущие показания счетчика</label>
+        </div>
+        <div class="input-field">
+          <input
+            id="descriptionReadings"
+            v-model="meters[index].descriptionReadings"
+            type="text"
+          />
+          <label for="descriptionReadings">Описание</label>
         </div>
         <hr />
       </div>
