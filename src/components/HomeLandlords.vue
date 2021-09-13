@@ -15,7 +15,7 @@
             >
               <span style="cursor: pointer"
                 >{{ landlord.info.name }} :
-                {{ calcDebtToTheLandlord(landlord, date) }}</span
+                {{ calcDebtToTheLandlord(landlord, date) }} </span
               >
             </router-link>
           </span>

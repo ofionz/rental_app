@@ -8,7 +8,7 @@ export default {
       for (let tenant in tenants) {
         amountRents += tenants[tenant].info.rent;
       }
-      return (landlord.info.share / 100) * amountRents;
+      return Math.round(landlord.info.share / 100 * amountRents);
     };
     Vue.prototype.$calcPaidAmount = function(essence, date) {
       let paidRents = 0;
